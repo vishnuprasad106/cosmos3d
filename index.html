@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmos3D - Interactive Solar System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Three.js Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- Space HUD Interface -->
+  <div class="hud">
+    <!-- Header bar -->
+    <header>
+      <div class="logo-container">
+        <div class="logo-icon"></div>
+        <h1>Cosmos3D</h1>
+      </div>
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span>SIMULATOR STATUS: ONLINE</span>
+      </div>
+    </header>
+
+    <!-- Controls Panel (Left Side) -->
+    <div class="panel controls-panel">
+      <div class="panel-title">
+        <span>Navigation HUD</span>
+      </div>
+
+      <!-- 6 Directions camera view -->
+      <div class="control-group">
+        <span class="control-label">Camera Angle Presets</span>
+        <div class="view-grid">
+          <button class="btn" id="view-top" data-view="top">Top View</button>
+          <button class="btn" id="view-bottom" data-view="bottom">Bottom View</button>
+          <button class="btn" id="view-front" data-view="front">Front View</button>
+          <button class="btn" id="view-back" data-view="back">Back View</button>
+          <button class="btn" id="view-left" data-view="left">Left View</button>
+          <button class="btn" id="view-right" data-view="right">Right View</button>
+        </div>
+      </div>
+
+      <!-- Simulation Speed Controls -->
+      <div class="control-group">
+        <span class="control-label">Orbit Simulation Speed</span>
+        <div class="speed-slider-container">
+          <div class="speed-row">
+            <input type="range" class="slider" id="speed-slider" min="0" max="500" value="100">
+            <span class="speed-value" id="speed-value">1.0x</span>
+          </div>
+          <div class="speed-presets">
+            <button class="btn speed-btn" id="speed-pause" data-speed="0">PAUSE</button>
+            <button class="btn speed-btn" id="speed-1x" data-speed="100">1.0x</button>
+            <button class="btn speed-btn" id="speed-2x" data-speed="200">2.0x</button>
+            <button class="btn speed-btn" id="speed-5x" data-speed="500">5.0x</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Overlays Toggles -->
+      <div class="control-group">
+        <span class="control-label">Visual Adjustments</span>
+        <div class="toggle-row">
+          <span>Orbital Trajectories</span>
+          <label class="switch">
+            <input type="checkbox" id="toggle-orbits" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span>Orbit Labels</span>
+          <label class="switch">
+            <input type="checkbox" id="toggle-labels" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span>Realistic Sizes (vs Visible)</span>
+          <label class="switch">
+            <input type="checkbox" id="toggle-scale">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Planet Selector -->
+      <div class="control-group">
+        <span class="control-label">Locate Celestial Object</span>
+        <select class="planet-dropdown" id="planet-select">
+          <option value="sun">The Sun (System Center)</option>
+          <option value="mercury">Mercury</option>
+          <option value="venus">Venus</option>
+          <option value="earth">Earth</option>
+          <option value="mars">Mars</option>
+          <option value="jupiter">Jupiter</option>
+          <option value="saturn">Saturn</option>
+          <option value="uranus">Uranus</option>
+          <option value="neptune">Neptune</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Details Panel (Right Side) -->
+    <div class="panel detail-panel" id="detail-panel">
+      <div class="panel-title">
+        <span>Object telemetry</span>
+      </div>
+      <div class="planet-header">
+        <div class="planet-icon-large" id="planet-info-icon" style="background: radial-gradient(circle, #ffd700 0%, #ff8800 100%);"></div>
+        <div class="planet-title-container">
+          <span class="planet-name" id="planet-info-name">The Sun</span>
+          <span class="planet-type" id="planet-info-type">Yellow Dwarf Star (G2V)</span>
+        </div>
+      </div>
+      <p class="planet-description" id="planet-info-desc">
+        The star at the center of the Solar System. It is a nearly perfect sphere of hot plasma, heated to incandescence by nuclear fusion reactions in its core, radiating the energy mainly as visible light and infrared radiation.
+      </p>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-label">Equatorial Diameter</span>
+          <span class="stat-value" id="stat-diameter">1,392,700 <span>km</span></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Mass Relative to Earth</span>
+          <span class="stat-value" id="stat-mass">333,000 <span>x Earth</span></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Orbital Velocity</span>
+          <span class="stat-value" id="stat-velocity">0 <span>km/s</span></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Average Temperature</span>
+          <span class="stat-value" id="stat-temp">5,500 <span>°C</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Interaction Guide Overlay -->
+  <div class="instructions">
+    <div class="instruction-item">
+      <span class="key-tag">Drag</span> Rotate Camera
+    </div>
+    <div class="instruction-item">
+      <span class="key-tag">Right-Click + Drag</span> Pan Scene
+    </div>
+    <div class="instruction-item">
+      <span class="key-tag">Scroll</span> Zoom In/Out
+    </div>
+    <div class="instruction-item">
+      <span class="key-tag">Double Click Planet</span> Focus Camera
+    </div>
+  </div>
+
+  <!-- Three.js Library & Application Entry point -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
